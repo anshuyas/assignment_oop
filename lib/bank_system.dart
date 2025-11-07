@@ -7,6 +7,9 @@ abstract class BankAccount {
   final String _accountHolderName;
   double _balance;
 
+  final List<String> _transactionHistory = [];
+
+
   // Constructor
   BankAccount(this._accountNumber, this._accountHolderName, this._balance);
 
@@ -27,6 +30,12 @@ abstract class BankAccount {
   // Abstract methods
   void deposit(double amount);
   void withdraw(double amount);
+
+  void recoordTransaction(String details){
+    _transactionHistory.add("$DateTime.now()}: $details");
+  }
+
+ 
 
   // Display method
   void displayInfo() {
@@ -128,6 +137,36 @@ class PremiumAccount extends BankAccount implements InterestBearing {
   }
 }
 
+class StudentAccount extends BankAccount {
+  static const double _maxBalance = 5000.0;
+
+  StudentAccount(String accNo, String name, double balance)
+      : super(accNo, name, balance);
+
+  @override
+  void deposit(double amount) {
+    if (balance + amount > _maxBalance) {
+      print("Deposit exceeds maximum balance limit of \$$_maxBalance.");
+    } else {
+      _balance += amount;
+      print("Deposited \$${amount.toStringAsFixed(2)} to Student Account.");
+      recordTransaction("Deposited \$${amount.toStringAsFixed(2)}");
+    }
+  }
+
+  @override
+  void withdraw(double amount) {
+    if (balance < amount) {
+      print("Insufficient funds!");
+    } else {
+      _balance -= amount;
+      print("Withdrew \$${amount.toStringAsFixed(2)} from Student Account.");
+      recordTransaction("Withdrew \$${amount.toStringAsFixed(2)}");
+    }
+  }
+}
+
+
 // Bank Class: Manages all accounts
 class Bank {
   final List<BankAccount> _accounts = [];
@@ -158,7 +197,18 @@ class Bank {
     }
   }
 
-  void generateReport() {
+  void applyMonthlyInterest(){
+    for(var acc in _accounts){
+      if (acc is InterestBearing){
+        acc.calculateInterest();
+      }
+    }
+    print( "Monthly interest applied to all interest-bearing account.");
+  }
+
+  
+
+  void generateReport() {0
     print("\nBank Report");
     for (var acc in _accounts) {
       acc.displayInfo();
@@ -174,6 +224,7 @@ void main() {
   var acc1 = SavingsAccount("S001", "Anshuya", 2000);
   var acc2 = CheckingAccount("C001", "Lily", 500);
   var acc3 = PremiumAccount("P001", "Daisy", 18000);
+  //var acc4 = StudentAccount("ST001", "Muffins", 5000); 
 
   bank.createAccount(acc1);
   bank.createAccount(acc2);
@@ -188,6 +239,8 @@ void main() {
 
   // Transfer money
   bank.transfer("S001", "C001", 100);
+
+  bank.applyMonthlyInterest();
 
   // Generate report
   bank.generateReport();
