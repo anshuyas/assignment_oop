@@ -9,7 +9,6 @@ abstract class BankAccount {
 
   final List<String> _transactionHistory = [];
 
-
   // Constructor
   BankAccount(this._accountNumber, this._accountHolderName, this._balance);
 
@@ -31,11 +30,9 @@ abstract class BankAccount {
   void deposit(double amount);
   void withdraw(double amount);
 
-  void recoordTransaction(String details){
-    _transactionHistory.add("$DateTime.now()}: $details");
+  void recordTransaction(String details){
+     _transactionHistory.add("${DateTime.now()}: $details");
   }
-
- 
 
   // Display method
   void displayInfo() {
@@ -44,6 +41,8 @@ abstract class BankAccount {
     print("Holder Name: $_accountHolderName");
     print("Balance: \$${_balance.toStringAsFixed(2)}");
   }
+  
+  void calculateInterest() {}
 }
 
 class SavingsAccount extends BankAccount implements InterestBearing {
@@ -146,7 +145,7 @@ class StudentAccount extends BankAccount {
   @override
   void deposit(double amount) {
     if (balance + amount > _maxBalance) {
-      print("Deposit exceeds maximum balance limit of \$$_maxBalance.");
+      print("Cannot deposit! Exceeds maximum balance of \$$_maxBalance.");
     } else {
       _balance += amount;
       print("Deposited \$${amount.toStringAsFixed(2)} to Student Account.");
@@ -156,7 +155,7 @@ class StudentAccount extends BankAccount {
 
   @override
   void withdraw(double amount) {
-    if (balance < amount) {
+    if (balance - amount < 0) {
       print("Insufficient funds!");
     } else {
       _balance -= amount;
@@ -165,7 +164,6 @@ class StudentAccount extends BankAccount {
     }
   }
 }
-
 
 // Bank Class: Manages all accounts
 class Bank {
@@ -197,18 +195,16 @@ class Bank {
     }
   }
 
-  void applyMonthlyInterest(){
-    for(var acc in _accounts){
-      if (acc is InterestBearing){
+  void applyMonthlyInterest() {
+    for (var acc in _accounts) {
+      if (acc is InterestBearing) {
         acc.calculateInterest();
       }
     }
-    print( "Monthly interest applied to all interest-bearing account.");
+    print("Monthly interest applied to all interest-bearing accounts.");
   }
 
-  
-
-  void generateReport() {0
+  void generateReport() {
     print("\nBank Report");
     for (var acc in _accounts) {
       acc.displayInfo();
