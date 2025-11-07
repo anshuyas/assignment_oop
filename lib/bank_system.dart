@@ -224,7 +224,7 @@ void main() {
   var acc1 = SavingsAccount("S001", "Anshuya", 2000);
   var acc2 = CheckingAccount("C001", "Lily", 500);
   var acc3 = PremiumAccount("P001", "Daisy", 18000);
-  //var acc4 = StudentAccount("ST001", "Muffins", 5000); 
+  var acc4 = StudentAccount("ST001", "Muffins", 5000); 
 
   bank.createAccount(acc1);
   bank.createAccount(acc2);
